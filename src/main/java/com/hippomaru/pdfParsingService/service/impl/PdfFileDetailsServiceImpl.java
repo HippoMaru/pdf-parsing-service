@@ -22,11 +22,11 @@ public class PdfFileDetailsServiceImpl implements PdfFileDetailsService {
     }
 
     @Override
-    public void saveFile(PdfFileDetails file) {
+    public void saveFile(PdfFileDetails fileDetails) {
         var temp = new Date();
-        file.setUploadDate((Date) temp.clone());
-        file.setUpdateDate((Date) temp.clone());
-        pdfFileDetailsDao.save(file);
+        fileDetails.setUploadDate((Date) temp.clone());
+        fileDetails.setUpdateDate((Date) temp.clone());
+        pdfFileDetailsDao.save(fileDetails);
     }
 
     @Override
