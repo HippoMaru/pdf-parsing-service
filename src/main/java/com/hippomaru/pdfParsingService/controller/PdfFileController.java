@@ -30,23 +30,20 @@ public class PdfFileController {
         return fileService.searchFilesByDocumentName(documentName);
     }
 
-    @GetMapping
+    @GetMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
-    @RequestMapping("/{id}")
     public PdfFileDetails searchFilesById(@PathVariable Integer id) {
         return fileService.searchFilesById(id);
     }
 
-    @DeleteMapping
+    @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
-    @RequestMapping("/{id}")
     public PdfFileDetails deleteFilesById(@PathVariable Integer id) {
         return fileService.deleteFilesById(id);
     }
 
-    @PatchMapping
+    @PutMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
-    @RequestMapping("/{id}")
     public PdfFileDetails updateFilesById(@PathVariable Integer id, @RequestBody PdfFileDetails fileDetails) {
         return fileService.updateFile(id, fileDetails);
     }

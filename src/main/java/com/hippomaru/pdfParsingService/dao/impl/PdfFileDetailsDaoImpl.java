@@ -38,7 +38,6 @@ public class PdfFileDetailsDaoImpl implements PdfFileDetailsDao {
         Query<PdfFileDetails> query = sessionFactory.getCurrentSession()
                 .createQuery("FROM PdfFileDetails WHERE documentId = :id", PdfFileDetails.class);
         query.setParameter("id", id);
-
         return query.getResultList()
                 .stream()
                 .findFirst()
@@ -50,9 +49,10 @@ public class PdfFileDetailsDaoImpl implements PdfFileDetailsDao {
     @Override
     public PdfFileDetails  deleteById(int id){
         PdfFileDetails result = searchById(id);
-        Query<PdfFileDetails> query = sessionFactory.getCurrentSession()
-                .createQuery("DELETE FROM PdfFileDetails WHERE documentId = :id", PdfFileDetails.class)
-                .setParameter("id", id);
+        sessionFactory.getCurrentSession()
+                .createQuery("DELETE FROM PdfFileDetails WHERE documentId = :id")
+                .setParameter("id", id)
+                .executeUpdate();
         return result;
     }
 }
