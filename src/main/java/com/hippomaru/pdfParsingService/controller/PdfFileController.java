@@ -26,7 +26,28 @@ public class PdfFileController {
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    public List<PdfFileDetails> searchFiles(@RequestParam String title) {
-        return fileService.searchFilesByTitle(title);
+    public List<PdfFileDetails> searchFilesByDocumentName(@RequestParam String documentName) {
+        return fileService.searchFilesByDocumentName(documentName);
+    }
+
+    @GetMapping
+    @ResponseStatus(HttpStatus.OK)
+    @RequestMapping("/{id}")
+    public PdfFileDetails searchFilesById(@PathVariable Integer id) {
+        return fileService.searchFilesById(id);
+    }
+
+    @DeleteMapping
+    @ResponseStatus(HttpStatus.OK)
+    @RequestMapping("/{id}")
+    public PdfFileDetails deleteFilesById(@PathVariable Integer id) {
+        return fileService.deleteFilesById(id);
+    }
+
+    @PatchMapping
+    @ResponseStatus(HttpStatus.OK)
+    @RequestMapping("/{id}")
+    public PdfFileDetails updateFilesById(@PathVariable Integer id, @RequestBody PdfFileDetails fileDetails) {
+        return fileService.updateFile(id, fileDetails);
     }
 }
