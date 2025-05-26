@@ -2,6 +2,7 @@ package com.hippomaru.pdfParsingService.dao.impl;
 
 import com.hippomaru.pdfParsingService.dao.PdfFileDetailsDao;
 import com.hippomaru.pdfParsingService.entity.PdfFileDetails;
+import com.hippomaru.pdfParsingService.exception.NoSuchPdfFileException;
 import org.hibernate.SessionFactory;
 import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,10 +26,33 @@ public class PdfFileDetailsDaoImpl implements PdfFileDetailsDao {
     }
 
     @Override
-    public List<PdfFileDetails> searchByTitle(String title) {
+    public List<PdfFileDetails> searchByDocumentName(String documentName) {
         Query<PdfFileDetails> query = sessionFactory.getCurrentSession()
-                .createQuery("FROM PdfFileDetails WHERE title LIKE :title", PdfFileDetails.class);
-        query.setParameter("title", "%" + title + "%");
+                .createQuery("FROM PdfFileDetails WHERE LOWER(documentName) LIKE LOWER(:documentName)", PdfFileDetails.class);
+        query.setParameter("documentName","%" + documentName.toLowerCase()+ "%");
         return query.getResultList();
+    }
+
+    @Override
+    public PdfFileDetails searchById(int id){
+        Query<PdfFileDetails> query = sessionFactory.getCurrentSession()
+                .createQuery("FROM PdfFileDetails WHERE documentId = :id", PdfFileDetails.class);
+        query.setParameter("id", id);
+        return query.getResultList()
+                .stream()
+                .findFirst()
+                .orElseThrow(() -> new NoSuchPdfFileException(
+                        "PDF file not found with id: " + id
+                ));
+    }
+
+    @Override
+    public PdfFileDetails  deleteById(int id){
+        PdfFileDetails result = searchById(id);
+        sessionFactory.getCurrentSession()
+                .createQuery("DELETE FROM PdfFileDetails WHERE documentId = :id")
+                .setParameter("id", id)
+                .executeUpdate();
+        return result;
     }
 }

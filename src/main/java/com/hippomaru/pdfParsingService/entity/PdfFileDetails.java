@@ -8,24 +8,35 @@ import java.util.Date;
 public class PdfFileDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long documentId;
 
-    private String title;
+    private String documentName;
     private String author;
     private String keywords;
 
     @Column(columnDefinition = "TEXT")
-    private String content;
+    private String recognizedText;
 
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date creationDate;
+    @Temporal(TemporalType.DATE)
+    private Date uploadDate;
 
-    public String getTitle() {
-        return title;
+    @Temporal(TemporalType.DATE)
+    private Date updateDate;
+
+    public Long getDocumentId() {
+        return documentId;
     }
 
-    public void setTitle(String title) {
-        this.title = title;
+    public void setDocumentId(Long documentId) {
+        this.documentId = documentId;
+    }
+
+    public String getDocumentName() {
+        return documentName;
+    }
+
+    public void setDocumentName(String documentName) {
+        this.documentName = documentName;
     }
 
     public String getAuthor() {
@@ -44,19 +55,27 @@ public class PdfFileDetails {
         this.keywords = keywords;
     }
 
-    public String getContent() {
-        return content;
+    public String getRecognizedText() {
+        return recognizedText;
     }
 
-    public void setContent(String content) {
-        this.content = content;
+    public void setRecognizedText(String recognizedText) {
+        this.recognizedText = recognizedText;
     }
 
-    public Date getCreationDate() {
-        return creationDate;
+    public Date getUploadDate() {
+        return uploadDate;
     }
 
-    public void setCreationDate(Date creationDate) {
-        this.creationDate = creationDate;
+    public void setUploadDate(Date uploadDate) {
+        this.uploadDate = uploadDate;
+    }
+
+    public Date getUpdateDate() {
+        return updateDate;
+    }
+
+    public void setUpdateDate(Date updateDate) {
+        this.updateDate = updateDate;
     }
 }

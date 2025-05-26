@@ -6,5 +6,7 @@ import java.util.List;
 
 public interface PdfFileDetailsDao {
     void save(PdfFileDetails file);
-    List<PdfFileDetails> searchByTitle(String title);
+    List<PdfFileDetails> searchByDocumentName(String title);
+    PdfFileDetails searchById(int id);
+    PdfFileDetails  deleteById(int id);
 }

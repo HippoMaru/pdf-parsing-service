@@ -23,12 +23,30 @@ public class PdfFileDetailsServiceImpl implements PdfFileDetailsService {
 
     @Override
     public void saveFile(PdfFileDetails file) {
-        file.setCreationDate(new Date());
+        var temp = new Date();
+        file.setUploadDate((Date) temp.clone());
+        file.setUpdateDate((Date) temp.clone());
         pdfFileDetailsDao.save(file);
     }
 
     @Override
-    public List<PdfFileDetails> searchFilesByTitle(String title) {
-        return pdfFileDetailsDao.searchByTitle(title);
+    public PdfFileDetails updateFile(int id, PdfFileDetails newFileDetails) {
+        PdfFileDetails oldFileDetails = searchFilesById(id);
+        newFileDetails.setDocumentId(oldFileDetails.getDocumentId());
+        newFileDetails.setUploadDate(oldFileDetails.getUploadDate());
+        newFileDetails.setUpdateDate(new Date());
+        pdfFileDetailsDao.save(newFileDetails);
+        return newFileDetails;
     }
+
+    @Override
+    public List<PdfFileDetails> searchFilesByDocumentName(String documentName) {
+        return pdfFileDetailsDao.searchByDocumentName(documentName);
+    }
+
+    @Override
+    public PdfFileDetails searchFilesById(int id) { return pdfFileDetailsDao.searchById(id);}
+
+    @Override
+    public PdfFileDetails deleteFilesById(int id) { return pdfFileDetailsDao.deleteById(id);}
 }
