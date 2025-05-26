@@ -11,6 +11,11 @@ public class ViewController {
 
     @GetMapping("/upload")
     public String showUploadForm() {
-        return "upload-form"; // имя JSP-файла без расширения
+        return "upload-form";
+    }
+
+    @GetMapping("/main")
+    public String showMainPage() {
+        return "main";
     }
 }

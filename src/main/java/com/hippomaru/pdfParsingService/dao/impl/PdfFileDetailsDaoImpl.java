@@ -28,8 +28,8 @@ public class PdfFileDetailsDaoImpl implements PdfFileDetailsDao {
     @Override
     public List<PdfFileDetails> searchByDocumentName(String documentName) {
         Query<PdfFileDetails> query = sessionFactory.getCurrentSession()
-                .createQuery("FROM PdfFileDetails WHERE documentName = :documentName", PdfFileDetails.class);
-        query.setParameter("documentName", documentName);
+                .createQuery("FROM PdfFileDetails WHERE LOWER(documentName) LIKE LOWER(:documentName)", PdfFileDetails.class);
+        query.setParameter("documentName","%" + documentName.toLowerCase()+ "%");
         return query.getResultList();
     }
 

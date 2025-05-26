@@ -15,6 +15,9 @@ import org.springframework.web.multipart.MultipartFile;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.*;
+import java.util.stream.Collectors;
+
 
 @Service
 public class PdfFileParsingServiceImpl implements PdfFileParsingService {
@@ -42,6 +45,7 @@ public class PdfFileParsingServiceImpl implements PdfFileParsingService {
             setBasicFileInfo(file, details);
             extractMetadata(document, details);
             extractTextWithOCR(document, details);
+            parseKeywords(details);
 
             return details;
 
@@ -49,6 +53,32 @@ public class PdfFileParsingServiceImpl implements PdfFileParsingService {
             throw new RuntimeException("Error processing PDF file", e);
         }
     }
+
+    private void parseKeywords(PdfFileDetails details){
+        String text = details.getRecognizedText()
+                .toLowerCase()
+                .replaceAll("[^\\p{L}]", " ")
+                .replaceAll("\\s+", " ")
+                .trim();
+        List<String> words = List.of(text.split(" "));
+        Map<String,Integer> wordsFreq = new HashMap<>();
+        for(String word : words){
+            if (word.length()>=5){
+                if (!wordsFreq.containsKey(word)){
+                    wordsFreq.put(word,0);
+                }
+                wordsFreq.put(word, wordsFreq.get(word)+1);
+            }
+
+        }
+        String keywords = wordsFreq.entrySet().stream()
+                .sorted((e1, e2) -> e2.getValue().compareTo(e1.getValue()))
+                .limit(7)
+                .map(Map.Entry::getKey)
+                .collect(Collectors.joining(","));
+        details.setKeywords(keywords);
+    }
+
 
     private void setBasicFileInfo(MultipartFile file, PdfFileDetails details) {
         details.setDocumentName(file.getOriginalFilename());

@@ -1,7 +1,7 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
 <head>
-    <title>Create PDF Details</title>
+    <title>Upload PDF File</title>
     <style>
         .container {
             max-width: 600px;
@@ -9,19 +9,22 @@
             padding: 20px;
             box-shadow: 0 0 10px rgba(0,0,0,0.1);
         }
-        .form-group {
-            margin-bottom: 15px;
+        .upload-area {
+            border: 2px dashed #ddd;
+            padding: 30px;
+            text-align: center;
+            margin-bottom: 20px;
+            cursor: pointer;
         }
-        label {
-            display: block;
-            margin-bottom: 5px;
-            font-weight: bold;
+        .upload-area:hover {
+            border-color: #4CAF50;
         }
-        input, textarea {
-            width: 100%;
-            padding: 8px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
+        #fileInput {
+            display: none;
+        }
+        #fileName {
+            margin-top: 10px;
+            color: #666;
         }
         button {
             background: #4CAF50;
@@ -40,55 +43,50 @@
 </head>
 <body>
     <div class="container">
-        <h2>Create New PDF File Details</h2>
-        <form id="pdfForm">
-            <div class="form-group">
-                <label for="documentName">Document Name:</label>
-                <input type="text" id="documentName" name="documentName" required>
+        <h2>Upload PDF File</h2>
+        <form id="uploadForm">
+            <div class="upload-area" onclick="document.getElementById('fileInput').click()">
+                <div>Click to select PDF file or drag and drop</div>
+                <input type="file" id="fileInput" name="file" accept="application/pdf">
+                <div id="fileName"></div>
             </div>
-
-            <div class="form-group">
-                <label for="author">Author:</label>
-                <input type="text" id="author" name="author">
-            </div>
-
-            <div class="form-group">
-                <label for="keywords">Keywords (comma-separated):</label>
-                <input type="text" id="keywords" name="keywords">
-            </div>
-
-            <div class="form-group">
-                <label for="recognizedText">Recognized Text:</label>
-                <textarea id="recognizedText" name="recognizedText" rows="5"></textarea>
-            </div>
-
-            <button type="submit">Submit</button>
+            <button type="submit">Upload PDF</button>
         </form>
         <div id="message"></div>
     </div>
 
     <script>
-        document.getElementById('pdfForm').addEventListener('submit', function(e) {
+        const fileInput = document.getElementById('fileInput');
+        const fileName = document.getElementById('fileName');
+
+        // Handle file selection
+        fileInput.addEventListener('change', function(e) {
+            if (this.files.length > 0) {
+                fileName.textContent = this.files[0].name;
+            }
+        });
+
+        // Handle form submission
+        document.getElementById('uploadForm').addEventListener('submit', function(e) {
             e.preventDefault();
 
-            const formData = {
-                documentName: document.getElementById('documentName').value,
-                author: document.getElementById('author').value,
-                keywords: document.getElementById('keywords').value,
-                recognizedText: document.getElementById('recognizedText').value
-            };
+            if (!fileInput.files.length) {
+                showMessage('Please select a PDF file', 'red');
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('file', fileInput.files[0]);
 
             fetch('${pageContext.request.contextPath}/api/pdfFiles', {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(formData)
+                body: formData
             })
             .then(response => {
                 if (response.ok) {
-                    showMessage('Record created successfully!', 'green');
-                    document.getElementById('pdfForm').reset();
+                    showMessage('File uploaded successfully!', 'green');
+                    fileInput.value = '';
+                    fileName.textContent = '';
                 } else {
                     response.json().then(data => showMessage('Error: ' + data.message, 'red'));
                 }
@@ -96,6 +94,28 @@
             .catch(error => {
                 showMessage('Error: ' + error.message, 'red');
             });
+        });
+
+        // Drag and drop handlers
+        const uploadArea = document.querySelector('.upload-area');
+
+        uploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadArea.style.borderColor = '#4CAF50';
+        });
+
+        uploadArea.addEventListener('dragleave', () => {
+            uploadArea.style.borderColor = '#ddd';
+        });
+
+        uploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadArea.style.borderColor = '#ddd';
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                fileInput.files = files;
+                fileName.textContent = files[0].name;
+            }
         });
 
         function showMessage(text, color) {

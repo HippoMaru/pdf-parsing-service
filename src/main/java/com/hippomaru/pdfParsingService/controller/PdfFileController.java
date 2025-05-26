@@ -29,6 +29,7 @@ public class PdfFileController {
     public void uploadDetails(@RequestBody PdfFileDetails fileDetails) {
         fileService.saveFile(fileDetails);
     }
+
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
     public void uploadFile(@RequestParam("file") MultipartFile file) {
@@ -45,7 +46,7 @@ public class PdfFileController {
     }
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    public List<PdfFileDetails> searchFilesByDocumentName(@RequestParam String documentName) {
+    public List<PdfFileDetails> searchFilesByDocumentName(@RequestParam(required = false, defaultValue = "") String documentName) {
         return fileService.searchFilesByDocumentName(documentName);
     }
 
