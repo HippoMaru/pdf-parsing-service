@@ -39,9 +39,36 @@
             padding: 10px;
             display: none;
         }
+
+        .back-button {
+                    padding: 10px 20px;
+                    background: #2196F3;
+                    color: white;
+                    text-decoration: none;
+                    border-radius: 4px;
+                    transition: background 0.3s;
+                    z-index: 1000;
+                }
+
+        .back-button:hover {
+            background: #1976D2;
+        }
+
+        /* Делаем контейнер относительным позиционированием */
+        .container {
+            position: relative;
+            padding-top: 60px; /* Добавляем место для кнопки */
+        }
+
     </style>
 </head>
 <body>
+    <a href="${pageContext.request.contextPath}/front/main"
+           class="back-button"
+           style="position: fixed; top: 20px; right: 20px;">
+            ← Back to Main
+        </a>
+
     <div class="container">
         <h2>Upload PDF File</h2>
         <form id="uploadForm">

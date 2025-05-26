@@ -66,6 +66,21 @@
             color: #666;
             padding: 40px;
         }
+
+        #uploadButton {
+                padding: 10px 30px;
+                background: #2196F3; /* Синий цвет */
+                color: white;
+                border: none;
+                border-radius: 4px;
+                cursor: pointer;
+                transition: background 0.3s;
+            }
+
+            #uploadButton:hover {
+                background: #1976D2; /* Темнее синий при наведении */
+            }
+
     </style>
 </head>
 <body>
@@ -73,6 +88,12 @@
         <div class="search-container">
             <input type="text" id="searchInput" placeholder="Search by document name...">
             <button id="searchButton">Search</button>
+            <button
+                    id="uploadButton"
+                    onclick="window.location.href='${pageContext.request.contextPath}/front/upload'"
+                >
+                    Upload
+                </button>
         </div>
 
         <div id="resultsContainer" class="cards-container"></div>
@@ -99,33 +120,51 @@
         });
 
         function performSearch(searchTerm) {
-                    const baseUrl = '<c:url value="/api/pdfFiles"/>';
                     const params = new URLSearchParams();
 
                     if (searchTerm.trim() !== '') {
                         params.append('documentName', searchTerm);
                     }
 
-                    fetch(`${baseUrl}?${params.toString()}`)
-                        .then(response => response.json())
-                        .then(data => updateResults(data))
-                        .catch(error => console.error('Error:', error));
+                    console.log('${pageContext.request.contextPath}/api/pdfFiles?' + params.toString());
+
+                    fetch('${pageContext.request.contextPath}/api/pdfFiles?' + params.toString())
+                        .then(response => {
+                            if (!response.ok) throw new Error('Network error');
+                            return response.json();
+                        })
+                        .then(data => {
+                            console.log(data);
+                            updateResults(data);
+                            })
+                        .catch(error => {
+                            console.error('Search error:', error);
+                        });
                 }
 
-        function updateResults(files) {
-            const container = document.getElementById('resultsContainer');
+        function truncateText(text, maxLength = 15) {
+            return text.length > maxLength
+                ? text.substring(0, maxLength) + '...'
+                : text;
+        }
 
-            if (files.length === 0) {
-                container.innerHTML = '<div class="empty-state">No documents found</div>';
-                return;
-            }
+
+
+        function updateResults(files) {
+                const container = document.getElementById('resultsContainer');
+
+                if (!files || files.length === 0) {
+                    container.innerHTML = '<div class="empty-state">No documents found</div>';
+                    return;
+                }
+
 
             container.innerHTML = files.map(file => `
-                <div class="card" onclick="window.location.href='${pageContext.request.contextPath}/front/fileDetails/${file.documentId}'">
-                    <div class="card-id">ID: ${file.documentId}</div>
-                    <div class="card-name">${file.documentName}</div>
-                </div>
-            `).join('');
+                        <div class="card" onclick="window.location.href='${pageContext.request.contextPath}/front/fileDetails/\${file.documentId}'">
+                            <div class="card-id">ID: \${file.documentId}</div>
+                            <div class="card-name">NAME: \${truncateText(file.documentName)}</div>
+                        </div>
+                    `).join('');
         }
     </script>
 </body>

@@ -8,7 +8,7 @@ public class WebApplicationInitializer
         extends AbstractAnnotationConfigDispatcherServletInitializer {
     @Override
     protected void customizeRegistration(ServletRegistration.Dynamic registration) {
-        String tempDir = "C:\\Users\\вероника\\IdeaProjects\\pdf-parsing-service2\\temp";  // Для Windows
+        String tempDir = "C:\\Users\\HippoMaru\\IdeaProjects\\pdf-parsing-service\\temp";  // Для Windows
 
         MultipartConfigElement multipartConfig = new MultipartConfigElement(
                 tempDir,
